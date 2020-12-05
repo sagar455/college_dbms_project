@@ -1,3 +1,4 @@
+const { render } = require("ejs");
 const mysql = require("mysql");
 
 
@@ -66,8 +67,16 @@ exports.addStud = (req, res) => {
     });
 
 
+};
 
+exports.getLog = (req, res) => {
+    mysqlConnection.query("select * from log", (error, results) => {
+        return res.render("admin", {
+        
+            logTable: results
+        });
 
+    });
 }
 
 
@@ -119,7 +128,6 @@ exports.updateMarks = (req, res) => {
 
     if (a1 && a2 && a3) {
         mysqlConnection.query("insert into log set datetime = now(), ?", { usn: usnU, change1: a1, change2: a2, change3: a3 });
-        mysqlConnection.query(`update student set ? where usn = "${usnU}"`, { assignment1: a1, assignment2: a2, assignment3: a3 });
         mysqlConnection.query(`update assignment_marks set ? where usn = "${usnU}"`, { assignment1: a1, assignment2: a2, assignment3: a3 }, (error, results) => {
 
             if (error) {
@@ -143,7 +151,6 @@ exports.updateMarks = (req, res) => {
 
         if (a1) {
             mysqlConnection.query("insert into log set datetime = now(), ?", { usn: usnU, change1: a1 });
-            mysqlConnection.query(`update student set ? where usn = "${usnU}"`, { assignment1: a1 });
             mysqlConnection.query(`update assignment_marks set ? where usn = "${usnU}"`, { assignment1: a1 }, (error, results) => {
 
                 if (error) {
@@ -164,7 +171,6 @@ exports.updateMarks = (req, res) => {
 
         } else if (a2) {
             mysqlConnection.query("insert into log set datetime = now(), ?", { usn: usnU, change2: a2 });
-            mysqlConnection.query(`update student set ? where usn = "${usnU}"`, { assignment1: a2 });
             mysqlConnection.query(`update assignment_marks set ? where usn = "${usnU}"`, { assignment2: a2 }, (error, results) => {
 
                 if (error) {
@@ -187,7 +193,6 @@ exports.updateMarks = (req, res) => {
 
         } else if (a3) {
             mysqlConnection.query("insert into log set datetime = now(), ?", { usn: usnU, change3: a3 });
-            mysqlConnection.query(`update student set ? where usn = "${usnU}"`, { assignment1: a3 });
             mysqlConnection.query(`update assignment_marks set ? where usn = "${usnU}"`, { assignment3: a3 }, (error, results) => {
                 if (error) {
                     console.log(error);
@@ -223,7 +228,7 @@ exports.remove = (req, res) => {
     mysqlConnection.query(`delete from assignment_link where usn="${usnSearch}"`);
     mysqlConnection.query(`delete from assignment_marks where usn="${usnSearch}"`);
     mysqlConnection.query(`delete from student where usn="${usnSearch}"`, (error, results) => {
-
+  console.log(usnSearch);
         if (error) {
             console.log(error);
         } else if (results.affectedRows) {
@@ -245,16 +250,18 @@ exports.remove = (req, res) => {
 //===============================================================STUDENTS====================================================================
 
 
-
-
 exports.getDetails = (req, res) => {
 
     const { usnSearch } = req.body;
 
     mysqlConnection.query(`select *
     from  student 
-    inner join assignment_link
-    on student.usn=assignment_link.usn where student.usn="${usnSearch}"`, (error, results) => {
+    inner join assignment_marks
+    on student.usn=assignment_marks.usn 
+    inner join assignment_link 
+    on student.usn=assignment_link.usn 
+    where student.usn="${usnSearch}"`, (error, results) => {
+        console.log(results[0])
 
 
 
@@ -282,67 +289,106 @@ exports.getDetails = (req, res) => {
     });
 
 }
+exports.addLink = (req, res) => {
 
-exports.addLink = (req,res)=>{
-    
-    
+
     const objValue = Object.values(req.body);
     const usnSearch = objValue[0];
     const l = objValue[1];
     const driveLink = objValue[2];
- 
-    if(l=="link1"){
-    mysqlConnection.query(`update  assignment_link set ? where  usn = "${usnSearch}"`,{link1:driveLink}, (error, results) =>{
-        if(error){
-            console.log(error);
-        }
-        else{
-            return res.render("student",{
-                isSuccess: "Submitted Successfully"
-            });
-        }
-    });
 
-    }
-
-    else if(l=="link2"){
-        mysqlConnection.query(`update  assignment_link set ? where  usn = "${usnSearch}"`,{link2:driveLink}, (error, results) =>{
-            if(error){
+    if (l == "link1" && driveLink) {
+        mysqlConnection.query(`update  assignment_link set ? where  usn = "${usnSearch}"`, { link1: driveLink }, (error, results) => {
+            if (error) {
                 console.log(error);
-            }
-            else{
-                return res.render("student",{
+            } else {
+                return res.render("student", {
                     isSuccess: "Submitted Successfully"
                 });
             }
         });
-    
-        }
-        
-        else if(l=="link3"){
-            mysqlConnection.query(`update  assignment_link set ? where  usn = "${usnSearch}"`,{link3:driveLink}, (error, results) =>{
-                if(error){
-                    console.log(error);
-                }
-                else{
-                    return res.render("student",{
-                        isSuccess: "Submitted Successfully"
-                    });
-                }
-            });
-        
-            }
 
-        else {
-
+    } else if (l == "link2" && driveLink) {
+        mysqlConnection.query(`update  assignment_link set ? where  usn = "${usnSearch}"`, { link2: driveLink }, (error, results) => {
+            if (error) {
+                console.log(error);
+            } else {
                 return res.render("student", {
+                    isSuccess: "Submitted Successfully"
+                });
+            }
+        });
+
+    } else if (l == "link3" && driveLink) {
+        mysqlConnection.query(`update  assignment_link set ? where  usn = "${usnSearch}"`, { link3: driveLink }, (error, results) => {
+            if (error) {
+                console.log(error);
+            } else {
+                return res.render("student", {
+                    isSuccess: "Submitted Successfully"
+                });
+            }
+        });
+
+    } else {
+
+        return res.render("student", {
+
+            isError: true
+
+        });
+    }
+
+
+
+
+}
+
+//===============================================================HOMEPAGE====================================================================
+
+
+exports.viewDetails = (req,res)=>{
     
-                    isError: true
-    
+    const { section } = req.body;
+
+    mysqlConnection.query(`select * from student where class="${ section }" order by semester`, (error, results) => {
+        if(error){
+            console.log(error);
+        }
+        else if(results[0]){
+            return res.render("homepage",{
+                data : results
+            });
+        }
+        else {
+            return res.render("homepage",{
+               isError : "data not found"
+            });
+        }
+
+    });
+}
+
+    exports.teacherDetails = (req,res)=>{
+        
+        const { section } = req.body;
+
+        mysqlConnection.query(`select * from teacher_details where class="${ section }" order by class`, (error, results) => {
+            if(error){
+                console.log(error);
+            }
+            else if(results[0]){
+                return res.render("homepage",{
+                    details : results
+                });
+            }
+            else {
+                return res.render("homepage",{
+                   isError : "data not found"
                 });
             }
     
-            
-    
-  
+        });
+
+
 }

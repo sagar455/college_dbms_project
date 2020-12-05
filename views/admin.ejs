@@ -11,7 +11,7 @@
     <script src="https://kit.fontawesome.com/a81368914c.js"></script>
 
     <title>Assignment portal</title>
-     <link rel="icon" href="https://imgur.com/on10hE7.jpeg" type="image/x-icon">
+    <link rel="icon" href="https://imgur.com/on10hE7.jpeg" type="image/x-icon">
     <nav class="navbar navbar-expand-xl navbar-dark bg-dark  justify-content-between" style="margin-bottom: 2%; padding: 15px;">
         <h2 class="display-4 navbar-brand">Assignment</h2>
 
@@ -137,7 +137,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-dark text-white" id="inputGroup-sizing-default"><i class="fas fa-user"></i></span>
                                 </div>
-                                <input type="text" class="form-control" name="nameS" placeholder="Name" id="name" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
+                                <input type="text" pattern="[^+*@$&^-_`~()]\D+" title="Enter valid Name" class="form-control" name="nameS" placeholder="Name" id="name" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
                             </div>
 
 
@@ -146,7 +146,8 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-dark text-white" id="inputGroup-sizing-default"><i class="fas fa-list-ol"></i></span>
                                 </div>
-                                <input type="text" class="form-control" name="usnS" placeholder="Usn" id="usn" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
+                                <input type="text" pattern="1ew\d\d[a-z][a-z]\d\d\d" title="it should start with 1ew and year then branc then roll number" class="form-control" name="usnS" placeholder="Usn" id="usn" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"
+                                    required>
                             </div>
 
 
@@ -162,7 +163,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-dark text-white" id="inputGroup-sizing-default"><i class="fas fa-archway"></i></span>
                                 </div>
-                                <input type="text" class="form-control" name="semS" placeholder="Semester" id="sem" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
+                                <input type="text" pattern="\d[stnr][thd]" title="enter valid sem eg:1st" class="form-control" name="semS" placeholder="Semester" id="sem" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
                             </div>
 
                             <div class="input-group mb-3">
@@ -195,12 +196,59 @@
         </div>
     </div>
 
+    <hr style="width: 720px;" class="my-4 ">
+
+    <div class="container-sm">
+        <div class="container-sm" style="width: 720px;">
+            <div class="jumbotron" style="border: 1px solid black;">
+                <h4 id="updateMarks" class="display-4 text-center" style="margin-bottom: 3%;">Check logs</h4>
+                <img style="width: 300px;" class="img-fluid mx-auto d-block mb-5" src="/img/log.svg" alt="logs" />
+                <form action="/auth/getLog" method="POST">
+                    <button type=" submit " value="Submit " class="btn btn-success rounded mx-auto " style="width: 100%; margin-bottom: 1.9rem; ">View All Logs </button>
+                </form>
+
+                <% if(typeof logTable!= "undefined" && logTable) { %>
+                    <h4>Log of marks update</h4>
+                    <table class="table able-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">usn</th>
+                                <th scope="col">datetime</th>
+                                <th scope="col">change1</th>
+                                <th scope="col">change2</th>
+                                <th scope="col">change3</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% logTable.forEach(function(logTable){ %>
+                            <tr>
+                                <th scope="row">
+                                    <%= logTable.usn %>
+                                </th>
+                                <td>
+                                    <%= logTable.datetime %>
+                                </td>
+                                <td>
+                                    <%= logTable.change1 %>
+                                </td>
+                                <td>
+                                    <%= logTable.change2 %>
+                                </td>
+                                <td>
+                                    <%= logTable.change3 %>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+
+                    <% } %>
 
 
-
-
-
-
+            </div>
+        </div>
+    </div>
 
 
 </body>
