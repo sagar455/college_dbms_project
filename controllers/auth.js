@@ -228,7 +228,7 @@ exports.remove = (req, res) => {
     mysqlConnection.query(`delete from assignment_link where usn="${usnSearch}"`);
     mysqlConnection.query(`delete from assignment_marks where usn="${usnSearch}"`);
     mysqlConnection.query(`delete from student where usn="${usnSearch}"`, (error, results) => {
-  console.log(usnSearch);
+ 
         if (error) {
             console.log(error);
         } else if (results.affectedRows) {
@@ -373,7 +373,7 @@ exports.viewDetails = (req,res)=>{
         
         const { section } = req.body;
 
-        mysqlConnection.query(`select * from teacher_details where class="${ section }" order by class`, (error, results) => {
+        mysqlConnection.query(`select * from teacher_details where class="${ section }" order by name`, (error, results) => {
             if(error){
                 console.log(error);
             }
